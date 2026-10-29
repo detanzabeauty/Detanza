@@ -18,7 +18,7 @@ A modern, responsive Coming Soon landing page for the **Detanza** brand.
 
 ## 🚀 How to Run
 
-You can run the project using **any** of the following methods:
+You can run the project using **any** of the following methods: 
 
 ### Method 1: Using NPM (Terminal)
 Run either command in your terminal:

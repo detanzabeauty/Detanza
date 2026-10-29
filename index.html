@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DetanZa™ — Coming Soon</title>
+  <meta name="description" content="DetanZa™ is preparing to unveil an exclusive brand experience. Join our VIP waitlist for early access and private launch updates.">
+  
+  <!-- Favicon using DetanZa logo -->
+  <link rel="icon" type="image/png" href="logo-transparent.png">
+  
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Syne:wght@600;700;800&display=swap" rel="stylesheet">
+  
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <!-- Ambient background glow elements tailored to DetanZa brand colors (Royal Blue + Vibrant Teal) -->
+  <div class="ambient-glow glow-1"></div>
+  <div class="ambient-glow glow-2"></div>
+  <div class="ambient-glow glow-3"></div>
+  <div class="noise-overlay"></div>
+
+  <!-- Interactive cursor follower (desktop) -->
+  <div class="cursor-glow" id="cursorGlow"></div>
+
+  <main class="page-wrapper">
+    <!-- Navigation / Brand Header -->
+    <header class="brand-header">
+      <div class="brand-logo-badge">
+        <img src="logo-cropped.png" alt="DetanZa™ Official Logo" class="brand-logo-img">
+      </div>
+      <div class="brand-status-tag">
+        <span class="pulse-dot"></span>
+        <span>Official Launch in Progress</span>
+      </div>
+    </header>
+
+    <!-- Hero Content -->
+    <section class="hero-content">
+      <div class="badge-container">
+        <span class="badge">
+          <svg class="sparkle-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="m12 3-1.9 5.8a2 2 0 0 1-1.3 1.3L3 12l5.8 1.9a2 2 0 0 1 1.3 1.3L12 21l1.9-5.8a2 2 0 0 1 1.3-1.3L21 12l-5.8-1.9a2 2 0 0 1-1.3-1.3L12 3z"/>
+          </svg>
+          COMING SOON
+        </span>
+      </div>
+
+      <h1 class="hero-title">
+        The Future of <span class="gradient-text">DetanZa™</span><br>
+        is Taking Shape.
+      </h1>
+
+      <p class="hero-subtitle">
+        We are crafting an elevated experience rooted in purity, scientific formulation, and uncompromised quality. Be among the first to experience the reveal.
+      </p>
+
+      <!-- Countdown Timer -->
+      <div class="countdown-wrapper">
+        <div class="countdown-title">OFFICIAL REVEAL COUNTDOWN</div>
+        <div class="countdown-timer" id="countdown">
+          <div class="time-block">
+            <span class="time-number" id="days">05</span>
+            <span class="time-label">Days</span>
+          </div>
+          <div class="time-separator">:</div>
+          <div class="time-block">
+            <span class="time-number" id="hours">00</span>
+            <span class="time-label">Hours</span>
+          </div>
+          <div class="time-separator">:</div>
+          <div class="time-block">
+            <span class="time-number" id="minutes">00</span>
+            <span class="time-label">Minutes</span>
+          </div>
+          <div class="time-separator">:</div>
+          <div class="time-block">
+            <span class="time-number" id="seconds">00</span>
+            <span class="time-label">Seconds</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- VIP Waitlist / Email Notification Form -->
+      <div class="form-container">
+        <form id="notifyForm" class="notify-form" novalidate>
+          <div class="input-group">
+            <div class="input-icon">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                <rect width="20" height="16" x="2" y="4" rx="2"/>
+                <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/>
+              </svg>
+            </div>
+            <input 
+              type="email" 
+              id="emailInput" 
+              placeholder="Enter your email for private invite..." 
+              required
+              autocomplete="email"
+            >
+            <button type="submit" class="submit-btn" id="submitBtn">
+              <span>Notify Me</span>
+              <svg class="arrow-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M5 12h14M12 5l7 7-7 7"/>
+              </svg>
+            </button>
+          </div>
+          <div class="form-feedback" id="formFeedback"></div>
+        </form>
+
+        <p class="privacy-note">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect width="18" height="11" x="3" y="11" rx="2" ry="2"/>
+            <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+          </svg>
+          Strictly confidential. No spam, only launch invitations.
+        </p>
+      </div>
+
+      <!-- Feature Highlight Badges -->
+      <div class="highlights-row">
+        <div class="highlight-item">
+          <span class="highlight-icon">✦</span>
+          <span>Derma Care & Purity</span>
+        </div>
+        <div class="highlight-item">
+          <span class="highlight-icon">✦</span>
+          <span>Signature Formulation</span>
+        </div>
+        <div class="highlight-item">
+          <span class="highlight-icon">✦</span>
+          <span>Exclusive VIP Launch</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="brand-footer">
+      <div class="footer-logo">
+        <img src="logo-transparent.png" alt="DetanZa™" class="footer-logo-img">
+      </div>
+      
+      <div class="social-links">
+        <a href="#instagram" aria-label="Instagram" class="social-link" title="Instagram">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+            <rect width="20" height="20" x="2" y="2" rx="5" ry="5"/>
+            <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/>
+            <line x1="17.5" x2="17.51" y1="6.5" y2="6.5"/>
+          </svg>
+        </a>
+        <a href="#x" aria-label="X (Twitter)" class="social-link" title="X">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+            <path d="M4 4l11.733 16h4.267l-11.733 -16z"/>
+            <path d="M4 20l6.768 -6.768m2.46 -2.46l6.772 -6.772"/>
+          </svg>
+        </a>
+        <a href="mailto:contact@detanza.com" aria-label="Email" class="social-link" title="Contact Us">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+            <rect width="20" height="16" x="2" y="4" rx="2"/>
+            <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/>
+          </svg>
+        </a>
+      </div>
+
+      <div class="copyright">
+        &copy; <span id="currentYear">2026</span> DetanZa™. All rights reserved.
+      </div>
+    </footer>
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>

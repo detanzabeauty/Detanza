@@ -1,0 +1,19 @@
+{
+  "name": "detanza-coming-soon",
+  "version": "1.0.0",
+  "description": "Detanza Brand — Official Coming Soon Website",
+  "main": "index.html",
+  "scripts": {
+    "start": "npx --yes serve .",
+    "dev": "npx --yes serve .",
+    "preview": "npx --yes serve ."
+  },
+  "keywords": [
+    "detanza",
+    "coming-soon",
+    "brand"
+  ],
+  "author": "",
+  "license": "MIT"
+}
+
