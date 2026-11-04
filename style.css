@@ -553,6 +553,191 @@ html, body {
 }
 
 /* ==========================================================================
+   How To Use Page
+   ========================================================================== */
+a.brand-logo-badge {
+  text-decoration: none;
+}
+
+.nav-link {
+  color: var(--text-muted);
+  text-decoration: none;
+  font-size: 0.85rem;
+  font-weight: 500;
+  padding: 0.45rem 1.1rem;
+  border: 1px solid var(--border-subtle);
+  border-radius: 9999px;
+  background: rgba(255, 255, 255, 0.04);
+  transition: var(--transition-smooth);
+}
+
+.nav-link:hover {
+  color: var(--brand-teal-light);
+  border-color: var(--border-brand);
+}
+
+.howto .hero-subtitle {
+  margin-bottom: 2rem;
+}
+
+.video-card {
+  width: 100%;
+  max-width: 720px;
+  margin-bottom: 3rem;
+}
+
+.video-stage {
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(16px);
+}
+
+.video-stage video {
+  display: block;
+  width: 100%;
+  max-height: 70vh;
+  background: #000;
+}
+
+.dropzone {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  min-height: 280px;
+  padding: 2rem 1.5rem;
+  margin: 0.75rem;
+  border: 2px dashed rgba(0, 163, 166, 0.4);
+  border-radius: 14px;
+  color: var(--brand-teal-light);
+  cursor: pointer;
+  transition: var(--transition-smooth);
+}
+
+.dropzone[hidden],
+.video-stage video[hidden],
+.video-actions[hidden] {
+  display: none;
+}
+
+.dropzone:hover,
+.dropzone.dragover {
+  background: rgba(0, 163, 166, 0.08);
+  border-color: var(--brand-teal-light);
+}
+
+.dropzone-title {
+  font-family: var(--font-heading);
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: var(--text-main);
+}
+
+.dropzone-hint {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+}
+
+.video-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.video-name {
+  font-size: 0.88rem;
+  color: var(--text-muted);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  min-width: 0;
+}
+
+.video-buttons {
+  display: flex;
+  gap: 0.6rem;
+  flex-shrink: 0;
+}
+
+.ghost-btn {
+  font-family: var(--font-body);
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text-main);
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--border-subtle);
+  border-radius: 9999px;
+  padding: 0.5rem 1.2rem;
+  cursor: pointer;
+  transition: var(--transition-smooth);
+}
+
+.ghost-btn:hover {
+  border-color: var(--border-brand);
+  color: var(--brand-teal-light);
+}
+
+.ghost-btn.danger:hover {
+  border-color: rgba(248, 113, 113, 0.5);
+  color: #f87171;
+}
+
+.video-card .form-feedback {
+  text-align: center;
+}
+
+.steps {
+  list-style: none;
+  width: 100%;
+  max-width: 720px;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1rem;
+  text-align: left;
+}
+
+.step {
+  display: flex;
+  gap: 1rem;
+  align-items: flex-start;
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: 16px;
+  padding: 1.25rem;
+  backdrop-filter: blur(12px);
+}
+
+.step-num {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: var(--btn-gradient);
+  font-family: var(--font-heading);
+  font-weight: 700;
+}
+
+.step h3 {
+  font-size: 1rem;
+  margin-bottom: 0.2rem;
+}
+
+.step p {
+  font-size: 0.88rem;
+  color: var(--text-muted);
+  line-height: 1.55;
+}
+
+/* ==========================================================================
    Responsive Breakpoints
    ========================================================================== */
 @media (max-width: 640px) {
@@ -609,5 +794,13 @@ html, body {
 
   .highlights-row {
     gap: 0.8rem 1.2rem;
+  }
+
+  .steps {
+    grid-template-columns: 1fr;
+  }
+
+  .dropzone {
+    min-height: 220px;
   }
 }

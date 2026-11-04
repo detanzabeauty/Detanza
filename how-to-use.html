@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>How to Use — DetanZa™</title>
+  <meta name="description" content="Learn how to use DetanZa™ step by step. Watch or upload your how-to-use video.">
+
+  <link rel="icon" type="image/png" href="logo-transparent.png">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Syne:wght@600;700;800&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="ambient-glow glow-1"></div>
+  <div class="ambient-glow glow-2"></div>
+  <div class="ambient-glow glow-3"></div>
+  <div class="noise-overlay"></div>
+  <div class="cursor-glow" id="cursorGlow"></div>
+
+  <main class="page-wrapper">
+    <header class="brand-header">
+      <a href="index.html" class="brand-logo-badge" aria-label="DetanZa home">
+        <img src="logo-cropped.png" alt="DetanZa™ Official Logo" class="brand-logo-img">
+      </a>
+      <a href="index.html" class="nav-link">&larr; Back to Home</a>
+    </header>
+
+    <section class="hero-content howto">
+      <div class="badge-container">
+        <span class="badge">HOW TO USE</span>
+      </div>
+
+      <h1 class="hero-title">
+        How to Use <span class="gradient-text">DetanZa™</span>
+      </h1>
+      <p class="hero-subtitle">
+        Follow the simple steps below, and watch the video for a full demonstration.
+      </p>
+
+      <!-- Video player / upload -->
+      <div class="video-card">
+        <div class="video-stage" id="videoStage">
+          <video id="videoPlayer" controls playsinline preload="metadata" hidden></video>
+
+          <label class="dropzone" id="dropzone" for="videoInput">
+            <svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+              <polyline points="17 8 12 3 7 8"/>
+              <line x1="12" x2="12" y1="3" y2="15"/>
+            </svg>
+            <span class="dropzone-title">Upload your video</span>
+            <span class="dropzone-hint">Drag &amp; drop here or click to browse &middot; MP4, WebM, MOV</span>
+          </label>
+        </div>
+
+        <input type="file" id="videoInput" accept="video/*" hidden>
+
+        <div class="video-actions" id="videoActions" hidden>
+          <span class="video-name" id="videoName"></span>
+          <div class="video-buttons">
+            <button type="button" class="ghost-btn" id="replaceBtn">Replace</button>
+            <button type="button" class="ghost-btn danger" id="removeBtn">Remove</button>
+          </div>
+        </div>
+
+        <div class="form-feedback" id="videoFeedback" role="status"></div>
+      </div>
+
+      <!-- Steps -->
+      <ol class="steps">
+        <li class="step">
+          <span class="step-num">1</span>
+          <div>
+            <h3>Prepare</h3>
+            <p>Cleanse your skin and pat it dry before application.</p>
+          </div>
+        </li>
+        <li class="step">
+          <span class="step-num">2</span>
+          <div>
+            <h3>Apply</h3>
+            <p>Take a small amount and gently apply it to the target area.</p>
+          </div>
+        </li>
+        <li class="step">
+          <span class="step-num">3</span>
+          <div>
+            <h3>Massage</h3>
+            <p>Massage in soft circular motions until fully absorbed.</p>
+          </div>
+        </li>
+        <li class="step">
+          <span class="step-num">4</span>
+          <div>
+            <h3>Repeat</h3>
+            <p>Use consistently as directed for best results.</p>
+          </div>
+        </li>
+      </ol>
+    </section>
+
+    <footer class="brand-footer">
+      <div class="footer-logo">
+        <img src="logo-transparent.png" alt="DetanZa™" class="footer-logo-img">
+      </div>
+      <div class="copyright">
+        &copy; <span id="currentYear">2026</span> DetanZa™. All rights reserved.
+      </div>
+    </footer>
+  </main>
+
+  <script src="script.js"></script>
+  <script src="how-to-use.js"></script>
+</body>
+</html>
