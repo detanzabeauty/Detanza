@@ -1,38 +1,37 @@
-import { handleUpload } from '@vercel/blob/client';
-import { isAuthed, readBody } from './_lib.js';
+import { cloudinaryConfig, cloudinarySign, isAuthed, readBody } from './_lib.js';
 
-const IMAGE_TYPES = ['image/jpeg', 'image/png', 'image/webp', 'image/avif', 'image/gif'];
-const VIDEO_TYPES = ['video/mp4', 'video/webm', 'video/quicktime'];
-const MAX_IMAGE = 10 * 1024 * 1024; // 10 MB
-const MAX_VIDEO = 500 * 1024 * 1024; // 500 MB
+const RULES = {
+  image: { folder: 'detanza/images', formats: 'jpg,jpeg,png,webp,avif,gif' },
+  video: { folder: 'detanza/videos', formats: 'mp4,webm,mov' },
+};
 
-// Issues short-lived upload tokens so the admin's browser can upload images and
-// videos straight to Vercel Blob (bypassing the 4.5 MB serverless body limit).
+// Returns a short-lived signature so the admin's browser can upload images and
+// videos straight to Cloudinary (the API secret never leaves the server).
 export default async function handler(req, res) {
   res.setHeader('Cache-Control', 'no-store');
   if (req.method !== 'POST') {
     res.setHeader('Allow', 'POST');
     return res.status(405).json({ error: 'Method not allowed' });
   }
+  if (!isAuthed(req)) return res.status(401).json({ error: 'Please log in again.' });
 
+  const kind = readBody(req).kind === 'video' ? 'video' : 'image';
+  const rule = RULES[kind];
   try {
-    const result = await handleUpload({
-      body: readBody(req),
-      request: req,
-      onBeforeGenerateToken: async (pathname) => {
-        if (!isAuthed(req)) throw new Error('Please log in again.');
-        const folder = pathname.split('/')[0];
-        if (folder === 'images') {
-          return { allowedContentTypes: IMAGE_TYPES, maximumSizeInBytes: MAX_IMAGE, addRandomSuffix: true };
-        }
-        if (folder === 'videos') {
-          return { allowedContentTypes: VIDEO_TYPES, maximumSizeInBytes: MAX_VIDEO, addRandomSuffix: true };
-        }
-        throw new Error('Invalid upload location.');
-      },
+    const { apiKey, apiSecret, cloudName } = cloudinaryConfig();
+    const params = {
+      allowed_formats: rule.formats,
+      folder: rule.folder,
+      timestamp: Math.floor(Date.now() / 1000),
+    };
+    return res.status(200).json({
+      cloudName,
+      apiKey,
+      resourceType: kind,
+      params,
+      signature: cloudinarySign(params, apiSecret),
     });
-    return res.status(200).json(result);
   } catch (err) {
-    return res.status(400).json({ error: err.message || 'Upload failed.' });
+    return res.status(500).json({ error: err.message });
   }
 }

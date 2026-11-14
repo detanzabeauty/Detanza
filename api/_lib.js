@@ -3,9 +3,10 @@
    Files in /api that start with "_" are not exposed as routes by Vercel.
    ========================================================================== */
 import crypto from 'node:crypto';
-import { get, put } from '@vercel/blob';
+import { MongoClient } from 'mongodb';
 
-export const CONTENT_PATH = 'site/content.json';
+const CONTENT_COLLECTION = 'site';
+const CONTENT_ID = 'content';
 const COOKIE_NAME = 'dz_admin';
 const SESSION_SECONDS = 7 * 24 * 60 * 60; // 7 days
 
@@ -175,39 +176,72 @@ export function normalizeContent(input) {
   return { settings, products, videos, updatedAt: new Date().toISOString() };
 }
 
-/* ---------------- Storage (Vercel Blob) ---------------- */
+/* ---------------- Data storage (MongoDB) ---------------- */
+// Reuse one connection across serverless invocations.
+function getDb() {
+  const uri = process.env.MONGODB_URI;
+  if (!uri) throw new Error('MONGODB_URI is not configured on the server.');
+  if (!globalThis.__dzMongo) {
+    globalThis.__dzMongo = new MongoClient(uri, { maxPoolSize: 5, serverSelectionTimeoutMS: 8000 })
+      .connect()
+      .catch((err) => {
+        globalThis.__dzMongo = null;
+        throw err;
+      });
+  }
+  return globalThis.__dzMongo.then((client) => client.db(process.env.MONGODB_DB || 'detanza'));
+}
+
 export async function readContent() {
-  let result = null;
-  try {
-    // useCache:false reads straight from storage so admin edits show up immediately
-    result = await get(CONTENT_PATH, { access: 'public', useCache: false });
-  } catch (err) {
-    if (err && err.name === 'BlobNotFoundError') result = null;
-    else throw err;
-  }
-  if (!result || result.statusCode !== 200 || !result.stream) {
-    return { ...structuredClone(DEFAULT_CONTENT), updatedAt: null };
-  }
-  const text = await new Response(result.stream).text();
-  const data = JSON.parse(text);
+  const db = await getDb();
+  const doc = await db.collection(CONTENT_COLLECTION).findOne({ _id: CONTENT_ID });
+  if (!doc) return { ...structuredClone(DEFAULT_CONTENT), updatedAt: null };
+  const { _id, ...data } = doc;
   return { ...normalizeContent(data), updatedAt: data.updatedAt || null };
 }
 
 export async function writeContent(content) {
-  await put(CONTENT_PATH, JSON.stringify(content), {
-    access: 'public',
-    addRandomSuffix: false,
-    allowOverwrite: true,
-    contentType: 'application/json',
-    cacheControlMaxAge: 60,
-  });
+  const db = await getDb();
+  await db
+    .collection(CONTENT_COLLECTION)
+    .replaceOne({ _id: CONTENT_ID }, { _id: CONTENT_ID, ...content }, { upsert: true });
 }
 
-export function isBlobUrl(value) {
+/* ---------------- Media storage (Cloudinary) ---------------- */
+export function cloudinaryConfig() {
+  const raw = process.env.CLOUDINARY_URL || '';
+  const m = raw.trim().match(/^cloudinary:\/\/([^:]+):([^@]+)@(.+)$/);
+  if (!m) throw new Error('CLOUDINARY_URL is not configured on the server.');
+  return { apiKey: m[1], apiSecret: m[2], cloudName: m[3] };
+}
+
+/** Cloudinary signature: sorted "k=v&k2=v2" + api_secret, SHA-1 hex. */
+export function cloudinarySign(params, apiSecret) {
+  const str = Object.keys(params)
+    .filter((k) => params[k] !== '' && params[k] != null)
+    .sort()
+    .map((k) => `${k}=${params[k]}`)
+    .join('&');
+  return crypto.createHash('sha1').update(str + apiSecret).digest('hex');
+}
+
+/** Returns { resourceType, publicId } for a URL in our Cloudinary account, else null. */
+export function parseMediaUrl(value) {
   try {
+    const { cloudName } = cloudinaryConfig();
     const u = new URL(value);
-    return u.protocol === 'https:' && u.hostname.endsWith('.blob.vercel-storage.com');
+    if (u.hostname !== 'res.cloudinary.com') return null;
+    const parts = u.pathname.split('/').filter(Boolean); // [cloud, type, 'upload', ..., 'v123', ...id]
+    if (parts[0] !== cloudName || parts[2] !== 'upload') return null;
+    const resourceType = parts[1];
+    if (!['image', 'video'].includes(resourceType)) return null;
+    let rest = parts.slice(3);
+    const vIdx = rest.findIndex((p) => /^v\d+$/.test(p));
+    if (vIdx >= 0) rest = rest.slice(vIdx + 1);
+    const publicId = decodeURIComponent(rest.join('/')).replace(/\.[^/.]+$/, '');
+    if (!publicId.startsWith('detanza/')) return null; // only delete files this site uploaded
+    return { resourceType, publicId };
   } catch {
-    return false;
+    return null;
   }
 }

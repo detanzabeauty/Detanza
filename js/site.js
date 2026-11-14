@@ -49,6 +49,20 @@
 
   const productUrl = (p) => `/product?id=${encodeURIComponent(p.id)}`;
 
+  /** Cloudinary on-the-fly resize + best format/quality. Non-Cloudinary URLs pass through. */
+  function img(url, width) {
+    if (!url || !/^https:\/\/res\.cloudinary\.com\/[^/]+\/image\/upload\//.test(url)) return url;
+    return url.replace('/image/upload/', `/image/upload/f_auto,q_auto,c_limit,w_${width}/`);
+  }
+
+  /** Auto thumbnail (frame at 1s) for a video uploaded to Cloudinary. */
+  function videoPoster(url, width = 640) {
+    if (!url || !/^https:\/\/res\.cloudinary\.com\/[^/]+\/video\/upload\//.test(url)) return '';
+    return url
+      .replace('/video/upload/', `/video/upload/so_1,f_jpg,q_auto,c_limit,w_${width}/`)
+      .replace(/\.[a-z0-9]+(\?.*)?$/i, '.jpg');
+  }
+
   function youtubeId(url) {
     try {
       const u = new URL(url);
@@ -62,12 +76,16 @@
   }
 
   function videoThumb(v) {
-    if (v.poster) return `<img src="${esc(v.poster)}" alt="" loading="lazy">`;
+    if (v.poster) return `<img src="${esc(img(v.poster, 640))}" alt="" loading="lazy">`;
     if (v.source === 'youtube') {
       const id = youtubeId(v.url);
       if (id) return `<img src="https://i.ytimg.com/vi/${esc(id)}/hqdefault.jpg" alt="" loading="lazy">`;
     }
-    if (v.source === 'upload') return `<video src="${esc(v.url)}#t=0.5" preload="metadata" muted playsinline></video>`;
+    if (v.source === 'upload') {
+      const auto = videoPoster(v.url);
+      if (auto) return `<img src="${esc(auto)}" alt="" loading="lazy">`;
+      return `<video src="${esc(v.url)}#t=0.5" preload="metadata" muted playsinline></video>`;
+    }
     return '';
   }
 
@@ -75,7 +93,7 @@
     const off = discount(p);
     const buy = buyLink(p, settings);
     const media = p.image
-      ? `<img src="${esc(p.image)}" alt="${esc(p.name)}" loading="lazy">`
+      ? `<img src="${esc(img(p.image, 600))}" alt="${esc(p.name)}" loading="lazy">`
       : `<div class="noimg"><img src="/logo-cropped.png" alt=""></div>`;
     return `
       <article class="product-card">
@@ -140,7 +158,8 @@
           ? `<iframe src="https://www.youtube-nocookie.com/embed/${esc(id)}?autoplay=1&rel=0" title="${esc(v.title)}" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen></iframe>`
           : `<p style="color:#fff;padding:40px;text-align:center">This video link is not valid.</p>`;
       } else {
-        player.innerHTML = `<video src="${esc(v.url)}" ${v.poster ? `poster="${esc(v.poster)}"` : ''} controls autoplay playsinline></video>`;
+        const poster = v.poster ? img(v.poster, 1280) : videoPoster(v.url, 1280);
+        player.innerHTML = `<video src="${esc(v.url)}" ${poster ? `poster="${esc(poster)}"` : ''} controls autoplay playsinline></video>`;
       }
       dialog.querySelector('.modal-caption h3').textContent = v.title;
       dialog.querySelector('.modal-caption p').textContent = v.description || '';
@@ -235,5 +254,5 @@
     return content;
   });
 
-  window.DZ = { ready, esc, money, discount, waLink, buyLink, productUrl, productCard, videoCard, youtubeId, ICONS };
+  window.DZ = { ready, esc, money, discount, waLink, buyLink, productUrl, productCard, videoCard, youtubeId, img, videoPoster, ICONS };
 })();

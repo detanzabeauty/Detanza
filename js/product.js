@@ -1,6 +1,6 @@
 /* DetanZa — product detail page (/product?id=...) */
 DZ.ready.then(({ settings, products, videos }) => {
-  const { esc, money, discount, buyLink, waLink, productCard, videoCard, ICONS } = DZ;
+  const { esc, money, discount, buyLink, waLink, productCard, videoCard, img, ICONS } = DZ;
   const root = document.getElementById('productRoot');
   const id = new URLSearchParams(location.search).get('id');
   const p = products.find((x) => x.id === id);
@@ -27,7 +27,7 @@ DZ.ready.then(({ settings, products, videos }) => {
   const related = videos.filter((v) => v.productId === p.id);
 
   const mainImg = images.length
-    ? `<img id="pdpMainImg" src="${esc(images[0])}" alt="${esc(p.name)}">`
+    ? `<img id="pdpMainImg" src="${esc(img(images[0], 1000))}" alt="${esc(p.name)}">`
     : `<div class="noimg" style="display:flex;align-items:center;justify-content:center;height:100%;padding:25%"><img src="/logo-cropped.png" alt="" style="opacity:.5;height:auto"></div>`;
 
   root.innerHTML = `
@@ -39,7 +39,7 @@ DZ.ready.then(({ settings, products, videos }) => {
       <div class="pdp-gallery">
         <div class="pdp-main">${mainImg}</div>
         ${images.length > 1 ? `<div class="pdp-thumbs">${images
-          .map((src, i) => `<button type="button" data-src="${esc(src)}" aria-current="${i === 0}" aria-label="Show image ${i + 1}"><img src="${esc(src)}" alt=""></button>`)
+          .map((src, i) => `<button type="button" data-src="${esc(img(src, 1000))}" aria-current="${i === 0}" aria-label="Show image ${i + 1}"><img src="${esc(img(src, 160))}" alt=""></button>`)
           .join('')}</div>` : ''}
       </div>
       <div class="pdp-info">

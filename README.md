@@ -1,8 +1,8 @@
 # DetanZa™ — Beauty & Skincare Website
 
 Storefront for the DetanZa™ cosmetics brand, with a built-in **Admin Panel** to manage
-products, how-to-use videos and site content. Hosted on **Vercel**; images, videos and
-data are stored in **Vercel Blob**.
+products, how-to-use videos and site content. Hosted on **Vercel**. Products, videos and
+settings are stored in **MongoDB Atlas**; images and videos are stored on **Cloudinary**.
 
 ## Pages
 
@@ -16,29 +16,41 @@ data are stored in **Vercel Blob**.
 Customers order through **WhatsApp** (pre-filled message with the product name), or through a
 custom **Buy link** per product (Amazon, Nykaa, Meesho, your own store…).
 
-## One-time setup on Vercel
+## One-time setup
 
-1. **Create a Blob store:** Vercel dashboard → your project → **Storage** → **Create** → **Blob**
-   → connect it to this project. This adds the `BLOB_READ_WRITE_TOKEN` variable automatically.
-2. **Set the admin password:** Project → **Settings** → **Environment Variables** → add
-   `ADMIN_PASSWORD` = a long, private password (12+ characters). Apply it to Production (and Preview if you use it).
-3. **Redeploy** (Deployments → ⋯ → Redeploy) so the new variables take effect.
-4. Open `https://<your-domain>/admin`, log in, and:
-   - **Site Settings** → enter your WhatsApp number (with country code, e.g. `919876543210`),
-     contact details, social links, banner text and image → **Save settings**.
-   - **Products** → **+ Add product**.
-   - **How-to Videos** → **+ Add video** (upload a file or paste a YouTube link).
+### 1. MongoDB Atlas
+- **Network Access** → **Add IP Address** → **Allow access from anywhere** (`0.0.0.0/0`).
+  Vercel has no fixed IP address, so this is required.
+- **Database Access**: note the database user's username and password.
+- Your connection string looks like `mongodb+srv://USERNAME:PASSWORD@cluster0.xxxxx.mongodb.net/`
 
-Changes appear on the public site within about 30–60 seconds (edge caching).
+### 2. Vercel environment variables
+Project → **Settings** → **Environment Variables** → add these for **Production** (and Preview if used):
 
-To change the password later, update `ADMIN_PASSWORD` and redeploy. This also logs out every existing session.
+| Key | Value |
+|---|---|
+| `MONGODB_URI` | your full MongoDB connection string (with username and password) |
+| `CLOUDINARY_URL` | `cloudinary://API_KEY:API_SECRET@CLOUD_NAME` (Cloudinary dashboard → API Keys) |
+| `ADMIN_PASSWORD` | a long, private password for `/admin` |
+| `MONGODB_DB` | *(optional)* database name, default `detanza` |
 
-## Storage limits to know
+Then **Redeploy** (Deployments → ⋯ → Redeploy).
 
-- Images: up to 10 MB each. Videos: up to 500 MB each (MP4 recommended).
-- Vercel Blob's free tier has limited storage and monthly data transfer. Video views use the most
-  data, so for long or popular videos, **YouTube links** are the cheapest option.
-- Files you remove or replace in the admin are deleted from storage automatically.
+### 3. Add your content
+Open `https://www.detanza.com/admin`, log in, then:
+- **Site Settings**: WhatsApp number with country code (e.g. `919876543210`), contacts, socials, banner.
+- **Products** → **+ Add product**.
+- **How-to Videos** → **+ Add video** (upload a file or paste a YouTube link).
+
+Changes appear on the public site within about 30 seconds (edge caching).
+To change the admin password, update `ADMIN_PASSWORD` and redeploy. Every existing session is logged out.
+
+## Storage limits to know (Cloudinary free plan)
+
+- Images up to 10 MB, videos up to 100 MB each. Use YouTube links for longer videos.
+- Large videos are uploaded in 20 MB chunks automatically.
+- The site requests resized, compressed images (`f_auto,q_auto`) from Cloudinary, so pages stay fast.
+- Files you remove or replace in the admin are deleted from Cloudinary automatically.
 
 ## Project structure
 
@@ -53,11 +65,11 @@ To change the password later, update `ADMIN_PASSWORD` and redeploy. This also lo
 │   ├── videos.js     # how-to-use page
 │   └── admin.js      # admin panel
 ├── api/              # Vercel serverless functions
-│   ├── _lib.js       # auth, validation, Blob read/write (not a route)
+│   ├── _lib.js       # auth, validation, MongoDB + Cloudinary helpers (not a route)
 │   ├── content.js    # GET site content / PUT save (admin)
 │   ├── login.js      # admin login/logout (signed HttpOnly cookie)
-│   ├── upload.js     # issues upload tokens for direct-to-Blob uploads (admin)
-│   └── media.js      # deletes unused uploaded files (admin)
+│   ├── upload.js     # signs direct browser→Cloudinary uploads (admin)
+│   └── media.js      # deletes unused files from Cloudinary (admin)
 ├── vercel.json       # clean URLs + security headers
 └── robots.txt
 ```
@@ -67,7 +79,7 @@ To change the password later, update `ADMIN_PASSWORD` and redeploy. This also lo
 ```bash
 npm install
 npx vercel link        # once, to connect this folder to the Vercel project
-npx vercel env pull    # downloads BLOB_READ_WRITE_TOKEN and ADMIN_PASSWORD into .env.local
+npx vercel env pull    # downloads MONGODB_URI, CLOUDINARY_URL, ADMIN_PASSWORD into .env.local
 npm run dev            # runs `vercel dev` with the API at http://localhost:3000
 ```
 

@@ -1,12 +1,12 @@
 /* ==========================================================================
    DetanZa — Admin panel
-   Products, how-to videos and site settings, saved to Vercel Blob via /api.
+   Products, how-to videos and site settings, saved via /api (MongoDB + Cloudinary).
    ========================================================================== */
-const UPLOAD_LIB = 'https://esm.sh/@vercel/blob@2.8.2/client';
 const IMAGE_TYPES = 'image/jpeg,image/png,image/webp,image/avif,image/gif';
 const VIDEO_TYPES = 'video/mp4,video/webm,video/quicktime';
-const MAX_IMAGE_MB = 10;
-const MAX_VIDEO_MB = 500;
+const MAX_IMAGE_MB = 10;   // Cloudinary free plan limit
+const MAX_VIDEO_MB = 100;  // Cloudinary free plan limit
+const CHUNK_BYTES = 20 * 1024 * 1024;
 
 const $ = (sel, root = document) => root.querySelector(sel);
 const $$ = (sel, root = document) => [...root.querySelectorAll(sel)];
@@ -18,8 +18,8 @@ const slugify = (s) =>
 const makeId = (name) => `${slugify(name) || 'item'}-${Math.random().toString(36).slice(2, 6)}`;
 const lines = (s) => String(s || '').split('\n').map((x) => x.trim()).filter(Boolean);
 const isHttpUrl = (s) => /^https?:\/\/\S+$/i.test(s);
-const isBlobUrl = (s) => {
-  try { return new URL(s).hostname.endsWith('.blob.vercel-storage.com'); } catch { return false; }
+const isMediaUrl = (s) => {
+  try { return new URL(s).hostname === 'res.cloudinary.com'; } catch { return false; }
 };
 
 function youtubeId(url) {
@@ -79,7 +79,7 @@ function mediaUrls(c) {
 }
 
 async function deleteMedia(urls) {
-  const list = urls.filter(isBlobUrl);
+  const list = urls.filter(isMediaUrl);
   if (!list.length) return;
   try { await api('DELETE', '/api/media', { urls: list }); } catch { /* not critical */ }
 }
@@ -92,25 +92,56 @@ function cleanupUploads(uploads) {
   deleteMedia(unused);
 }
 
-let uploadLib = null;
+/** POST one request to Cloudinary with upload progress. */
+function xhrUpload(url, form, headers, onProgress) {
+  return new Promise((resolve, reject) => {
+    const xhr = new XMLHttpRequest();
+    xhr.open('POST', url);
+    Object.entries(headers || {}).forEach(([k, v]) => xhr.setRequestHeader(k, v));
+    xhr.upload.onprogress = (e) => { if (e.lengthComputable && onProgress) onProgress(e.loaded / e.total); };
+    xhr.onload = () => {
+      let data = {};
+      try { data = JSON.parse(xhr.responseText); } catch { /* ignore */ }
+      if (xhr.status >= 200 && xhr.status < 300) resolve(data);
+      else reject(new Error(data.error?.message || `Upload failed (${xhr.status})`));
+    };
+    xhr.onerror = () => reject(new Error('Network error during upload.'));
+    xhr.send(form);
+  });
+}
+
+/** Upload a file directly to Cloudinary using a signature from /api/upload. */
 async function uploadFile(file, kind, onProgress) {
-  if (!uploadLib) {
-    try {
-      uploadLib = await import(UPLOAD_LIB);
-    } catch {
-      throw new Error('Could not load the uploader. Check your internet connection.');
+  const sig = await api('POST', '/api/upload', { kind });
+  const endpoint = `https://api.cloudinary.com/v1_1/${encodeURIComponent(sig.cloudName)}/${sig.resourceType}/upload`;
+  const makeForm = (blob) => {
+    const fd = new FormData();
+    fd.append('file', blob, file.name);
+    fd.append('api_key', sig.apiKey);
+    fd.append('signature', sig.signature);
+    Object.entries(sig.params).forEach(([k, v]) => fd.append(k, String(v)));
+    return fd;
+  };
+  const report = (pct) => onProgress && onProgress(Math.min(100, pct));
+
+  let result;
+  if (file.size <= CHUNK_BYTES) {
+    result = await xhrUpload(endpoint, makeForm(file), null, (p) => report(p * 100));
+  } else {
+    // Large videos: upload in chunks so a slow connection doesn't time out.
+    const uploadId = `dz-${Date.now()}-${Math.random().toString(36).slice(2, 10)}`;
+    for (let start = 0; start < file.size; start += CHUNK_BYTES) {
+      const end = Math.min(start + CHUNK_BYTES, file.size);
+      result = await xhrUpload(
+        endpoint,
+        makeForm(file.slice(start, end)),
+        { 'X-Unique-Upload-Id': uploadId, 'Content-Range': `bytes ${start}-${end - 1}/${file.size}` },
+        (p) => report(((start + p * (end - start)) / file.size) * 100)
+      );
     }
   }
-  const ext = (file.name.split('.').pop() || '').toLowerCase().replace(/[^a-z0-9]/g, '') || 'bin';
-  const base = slugify(file.name.replace(/\.[^.]+$/, '')) || 'file';
-  const blob = await uploadLib.upload(`${kind === 'video' ? 'videos' : 'images'}/${base}.${ext}`, file, {
-    access: 'public',
-    handleUploadUrl: '/api/upload',
-    contentType: file.type || undefined,
-    multipart: file.size > 25 * 1024 * 1024,
-    onUploadProgress: (e) => onProgress && onProgress(e.percentage),
-  });
-  return blob.url;
+  if (!result || !result.secure_url) throw new Error('Upload did not finish. Please try again.');
+  return result.secure_url;
 }
 
 function checkFile(file, kind) {

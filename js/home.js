@@ -1,11 +1,11 @@
 /* DetanZa — home page: hero image, shop grid with search/filter, videos, contact */
 DZ.ready.then(({ settings, products, videos }) => {
-  const { esc, productCard, videoCard, waLink, ICONS } = DZ;
+  const { esc, productCard, videoCard, waLink, img, ICONS } = DZ;
 
   // Hero image
   if (settings.heroImage) {
     document.getElementById('heroArt').innerHTML =
-      `<img src="${esc(settings.heroImage)}" alt="DetanZa™ products" fetchpriority="high">`;
+      `<img src="${esc(img(settings.heroImage, 900))}" alt="DetanZa™ products" fetchpriority="high">`;
   }
 
   // Shop: featured first, then the admin's order
