@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex, nofollow">
+  <title>Admin — DetanZa™</title>
+  <link rel="icon" type="image/png" href="/logo-transparent.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/style.css">
+  <link rel="stylesheet" href="/admin.css">
+</head>
+<body class="admin">
+
+  <!-- ================= Login ================= -->
+  <section class="login-view" id="loginView" hidden>
+    <form class="login-card" id="loginForm">
+      <img src="/logo-cropped.png" alt="DetanZa™" class="login-logo">
+      <h1>Admin Panel</h1>
+      <p>Log in to manage products, videos and site content.</p>
+      <label class="field">
+        <span>Password</span>
+        <input type="password" id="loginPassword" autocomplete="current-password" required>
+      </label>
+      <p class="form-error" id="loginError" role="alert"></p>
+      <button class="btn btn-primary btn-block" type="submit" id="loginBtn">Log in</button>
+      <a class="back-link" href="/">&larr; Back to website</a>
+    </form>
+  </section>
+
+  <!-- ================= Dashboard ================= -->
+  <div class="app-view" id="appView" hidden>
+    <header class="admin-top">
+      <div class="admin-top-inner">
+        <a href="/" class="logo"><img src="/logo-cropped.png" alt="DetanZa™"></a>
+        <span class="admin-pill">Admin</span>
+        <div class="admin-top-actions">
+          <a class="btn btn-light btn-sm" href="/" target="_blank" rel="noopener">View website ↗</a>
+          <button class="btn btn-light btn-sm" type="button" id="logoutBtn">Log out</button>
+        </div>
+      </div>
+      <nav class="admin-tabs" role="tablist" aria-label="Admin sections">
+        <button type="button" role="tab" class="admin-tab" data-tab="products" aria-selected="true">Products <span class="count" id="productCount">0</span></button>
+        <button type="button" role="tab" class="admin-tab" data-tab="videos" aria-selected="false">How-to Videos <span class="count" id="videoCount">0</span></button>
+        <button type="button" role="tab" class="admin-tab" data-tab="settings" aria-selected="false">Site Settings</button>
+      </nav>
+    </header>
+
+    <main class="admin-main">
+      <!-- Products -->
+      <section class="panel" id="panel-products" role="tabpanel">
+        <div class="panel-head">
+          <div>
+            <h2>Products</h2>
+            <p>Add, edit, hide or reorder the products shown in your shop.</p>
+          </div>
+          <button class="btn btn-primary" type="button" id="addProductBtn">+ Add product</button>
+        </div>
+        <div class="item-list" id="productList"></div>
+      </section>
+
+      <!-- Videos -->
+      <section class="panel" id="panel-videos" role="tabpanel" hidden>
+        <div class="panel-head">
+          <div>
+            <h2>How-to-Use Videos</h2>
+            <p>Upload a video file or paste a YouTube link, and link it to a product.</p>
+          </div>
+          <button class="btn btn-primary" type="button" id="addVideoBtn">+ Add video</button>
+        </div>
+        <div class="item-list" id="videoList"></div>
+      </section>
+
+      <!-- Settings -->
+      <section class="panel" id="panel-settings" role="tabpanel" hidden>
+        <div class="panel-head">
+          <div>
+            <h2>Site Settings</h2>
+            <p>Homepage text, contact details and social links.</p>
+          </div>
+        </div>
+        <form id="settingsForm" class="settings-form">
+          <fieldset class="card">
+            <legend>Top announcement bar</legend>
+            <label class="field"><span>Announcement text <small>(leave empty to hide)</small></span><input name="announcement" maxlength="200"></label>
+          </fieldset>
+
+          <fieldset class="card">
+            <legend>Homepage banner</legend>
+            <div class="grid-2">
+              <label class="field"><span>Small label</span><input name="heroEyebrow" maxlength="80" placeholder="New from DetanZa™"></label>
+              <label class="field"><span>Button text</span><input name="heroCta" maxlength="40" placeholder="Shop Now"></label>
+            </div>
+            <label class="field"><span>Headline</span><input name="heroTitle" maxlength="120"></label>
+            <label class="field"><span>Sub-text</span><textarea name="heroSubtitle" rows="3" maxlength="400"></textarea></label>
+            <div class="field"><span>Banner image <small>(square image looks best)</small></span><div data-media="heroImage"></div></div>
+          </fieldset>
+
+          <fieldset class="card">
+            <legend>About section</legend>
+            <label class="field"><span>Title</span><input name="aboutTitle" maxlength="120"></label>
+            <label class="field"><span>Text</span><textarea name="aboutText" rows="5" maxlength="3000"></textarea></label>
+          </fieldset>
+
+          <fieldset class="card">
+            <legend>Contact &amp; ordering</legend>
+            <label class="field">
+              <span>WhatsApp number <small>(with country code, e.g. 919876543210) — used for all "Order on WhatsApp" buttons</small></span>
+              <input name="whatsapp" inputmode="numeric" maxlength="20" placeholder="919876543210">
+            </label>
+            <div class="grid-2">
+              <label class="field"><span>Phone</span><input name="phone" maxlength="30"></label>
+              <label class="field"><span>Email</span><input name="email" type="email" maxlength="120"></label>
+            </div>
+            <label class="field"><span>Address</span><input name="address" maxlength="300"></label>
+          </fieldset>
+
+          <fieldset class="card">
+            <legend>Social links</legend>
+            <label class="field"><span>Instagram URL</span><input name="instagram" type="url" placeholder="https://instagram.com/…"></label>
+            <label class="field"><span>Facebook URL</span><input name="facebook" type="url" placeholder="https://facebook.com/…"></label>
+            <label class="field"><span>YouTube URL</span><input name="youtube" type="url" placeholder="https://youtube.com/@…"></label>
+          </fieldset>
+
+          <div class="sticky-actions">
+            <button class="btn btn-primary" type="submit">Save settings</button>
+          </div>
+        </form>
+      </section>
+    </main>
+  </div>
+
+  <!-- ================= Product editor ================= -->
+  <dialog class="editor" id="productDialog" aria-labelledby="productDialogTitle">
+    <form id="productForm" method="dialog" novalidate>
+      <header class="editor-head">
+        <h2 id="productDialogTitle">Add product</h2>
+        <button type="button" class="icon-btn" data-close aria-label="Close">&times;</button>
+      </header>
+      <div class="editor-body">
+        <label class="field"><span>Product name *</span><input name="name" required maxlength="120"></label>
+        <label class="field"><span>Short tagline</span><input name="tagline" maxlength="200" placeholder="e.g. Removes tan & brightens skin"></label>
+        <div class="grid-3">
+          <label class="field"><span>Category</span><input name="category" maxlength="60" list="categoryOptions" placeholder="e.g. Face Care"></label>
+          <label class="field"><span>Size / quantity</span><input name="size" maxlength="40" placeholder="e.g. 100 g"></label>
+          <label class="field"><span>Badge</span><input name="badge" maxlength="30" list="badgeOptions" placeholder="e.g. Bestseller"></label>
+        </div>
+        <datalist id="categoryOptions"></datalist>
+        <datalist id="badgeOptions"><option value="Bestseller"><option value="New"><option value="Limited"><option value="Sale"></datalist>
+        <div class="grid-2">
+          <label class="field"><span>Selling price (₹) *</span><input name="price" type="number" min="0" step="0.01" required></label>
+          <label class="field"><span>MRP (₹) <small>(optional, shows discount)</small></span><input name="mrp" type="number" min="0" step="0.01"></label>
+        </div>
+        <div class="field"><span>Main image</span><div data-media="image"></div></div>
+        <div class="field"><span>More images <small>(optional)</small></span><div data-gallery="gallery"></div></div>
+        <label class="field"><span>Description</span><textarea name="description" rows="4" maxlength="5000"></textarea></label>
+        <label class="field"><span>Key benefits <small>(one per line)</small></span><textarea name="benefits" rows="4" placeholder="Reduces tan&#10;Brightens skin"></textarea></label>
+        <label class="field"><span>How to use steps <small>(one step per line)</small></span><textarea name="howToUse" rows="4" placeholder="Cleanse your face&#10;Apply a thin layer"></textarea></label>
+        <label class="field"><span>Ingredients</span><textarea name="ingredients" rows="3" maxlength="3000"></textarea></label>
+        <label class="field">
+          <span>Buy link <small>(optional — Amazon, Nykaa, Meesho… Leave empty to use WhatsApp ordering)</small></span>
+          <input name="buyLink" type="url" placeholder="https://…">
+        </label>
+        <div class="toggles">
+          <label class="toggle"><input type="checkbox" name="visible" checked><span>Show on website</span></label>
+          <label class="toggle"><input type="checkbox" name="featured"><span>Featured (show first)</span></label>
+        </div>
+        <p class="form-error" data-error role="alert"></p>
+      </div>
+      <footer class="editor-foot">
+        <button type="button" class="btn btn-light" data-close>Cancel</button>
+        <button type="submit" class="btn btn-primary" data-submit>Save product</button>
+      </footer>
+    </form>
+  </dialog>
+
+  <!-- ================= Video editor ================= -->
+  <dialog class="editor" id="videoDialog" aria-labelledby="videoDialogTitle">
+    <form id="videoForm" method="dialog" novalidate>
+      <header class="editor-head">
+        <h2 id="videoDialogTitle">Add video</h2>
+        <button type="button" class="icon-btn" data-close aria-label="Close">&times;</button>
+      </header>
+      <div class="editor-body">
+        <label class="field"><span>Video title *</span><input name="title" required maxlength="150" placeholder="e.g. How to use DetanZa De-Tan Pack"></label>
+        <label class="field"><span>Short description</span><textarea name="description" rows="2" maxlength="1000"></textarea></label>
+        <label class="field"><span>Related product</span><select name="productId"></select></label>
+
+        <div class="field">
+          <span>Video source *</span>
+          <div class="segmented">
+            <label><input type="radio" name="source" value="upload" checked><span>Upload video file</span></label>
+            <label><input type="radio" name="source" value="youtube"><span>YouTube link</span></label>
+          </div>
+        </div>
+        <div class="field" data-source="upload"><span>Video file <small>(MP4 recommended, up to 500 MB)</small></span><div data-media="videoFile"></div></div>
+        <label class="field" data-source="youtube" hidden><span>YouTube URL</span><input name="youtubeUrl" type="url" placeholder="https://www.youtube.com/watch?v=…"></label>
+        <div class="field"><span>Cover image <small>(optional)</small></span><div data-media="poster"></div></div>
+
+        <div class="toggles">
+          <label class="toggle"><input type="checkbox" name="visible" checked><span>Show on website</span></label>
+        </div>
+        <p class="form-error" data-error role="alert"></p>
+      </div>
+      <footer class="editor-foot">
+        <button type="button" class="btn btn-light" data-close>Cancel</button>
+        <button type="submit" class="btn btn-primary" data-submit>Save video</button>
+      </footer>
+    </form>
+  </dialog>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <script type="module" src="/js/admin.js"></script>
+</body>
+</html>

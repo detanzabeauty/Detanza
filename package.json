@@ -1,19 +1,21 @@
 {
-  "name": "detanza-coming-soon",
-  "version": "1.0.0",
-  "description": "Detanza Brand — Official Coming Soon Website",
-  "main": "index.html",
+  "name": "detanza-website",
+  "version": "2.0.0",
+  "description": "DetanZa™ beauty & skincare website with admin panel",
   "scripts": {
-    "start": "npx --yes serve .",
-    "dev": "npx --yes serve .",
+    "dev": "vercel dev",
     "preview": "npx --yes serve ."
   },
   "keywords": [
     "detanza",
-    "coming-soon",
-    "brand"
+    "beauty",
+    "skincare",
+    "cosmetics"
   ],
   "author": "",
-  "license": "MIT"
+  "license": "MIT",
+  "dependencies": {
+    "@vercel/blob": "2.8.2"
+  },
+  "type": "module"
 }
-
