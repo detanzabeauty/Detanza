@@ -510,7 +510,7 @@ function openProduct(p = null) {
   productForm.reset();
   $('#productDialogTitle').textContent = p ? 'Edit product' : 'Add product';
   const set = (n, v) => { fieldOf(productForm, n).value = v ?? ''; };
-  ['name', 'tagline', 'category', 'size', 'badge', 'description', 'ingredients', 'buyLink'].forEach((n) => set(n, p?.[n]));
+  ['name', 'tagline', 'category', 'size', 'badge', 'description', 'ingredients', 'caution', 'buyLink'].forEach((n) => set(n, p?.[n]));
   set('price', p?.price);
   set('mrp', p?.mrp);
   set('benefits', (p?.benefits || []).join('\n'));
@@ -557,6 +557,7 @@ productForm.addEventListener('submit', (e) => {
       benefits: lines(fieldOf(productForm, 'benefits').value),
       howToUse: lines(fieldOf(productForm, 'howToUse').value),
       ingredients: valOf(productForm, 'ingredients'),
+      caution: valOf(productForm, 'caution'),
       buyLink,
       visible: fieldOf(productForm, 'visible').checked,
       featured: fieldOf(productForm, 'featured').checked,

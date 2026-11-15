@@ -4,33 +4,14 @@
    ========================================================================== */
 import crypto from 'node:crypto';
 import { MongoClient } from 'mongodb';
+import defaults from '../data/defaults.js';
 
 const CONTENT_COLLECTION = 'site';
 const CONTENT_ID = 'content';
 const COOKIE_NAME = 'dz_admin';
 const SESSION_SECONDS = 7 * 24 * 60 * 60; // 7 days
 
-export const DEFAULT_CONTENT = {
-  settings: {
-    announcement: 'Welcome to DetanZa™ — order easily on WhatsApp',
-    heroEyebrow: 'New from DetanZa™',
-    heroTitle: 'Reveal your natural glow',
-    heroSubtitle: 'Skin-loving beauty essentials made for everyday care. Watch how to use every product and order in one tap.',
-    heroCta: 'Shop Now',
-    heroImage: '',
-    aboutTitle: 'About DetanZa™',
-    aboutText: 'DetanZa™ is a beauty and skincare brand focused on simple, effective care for every skin. We create products you will love to use every day — and show you exactly how to use them for the best results.',
-    whatsapp: '',
-    email: '',
-    phone: '',
-    address: '',
-    instagram: '',
-    facebook: '',
-    youtube: '',
-  },
-  products: [],
-  videos: [],
-};
+export const DEFAULT_CONTENT = defaults;
 
 /* ---------------- Auth ---------------- */
 function adminPassword() {
@@ -96,6 +77,8 @@ const bool = (v, fallback = false) => (typeof v === 'boolean' ? v : fallback);
 const url = (v) => {
   const s = str(v, 1000);
   if (!s) return '';
+  // Site-relative asset paths like /images/tan-vanish/front.webp
+  if (/^\/(?!\/)[A-Za-z0-9._\-/]+$/.test(s)) return s;
   try {
     const u = new URL(s);
     return u.protocol === 'https:' || u.protocol === 'http:' ? u.toString() : '';
@@ -151,7 +134,8 @@ export function normalizeContent(input) {
       gallery: (Array.isArray(p.gallery) ? p.gallery : []).map(url).filter(Boolean).slice(0, 8),
       description: str(p.description, 5000),
       benefits: lines(p.benefits),
-      ingredients: str(p.ingredients, 3000),
+      ingredients: str(p.ingredients, 4000),
+      caution: str(p.caution, 3000),
       howToUse: lines(p.howToUse),
       buyLink: url(p.buyLink),
       featured: bool(p.featured),

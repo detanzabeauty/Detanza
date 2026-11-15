@@ -2,10 +2,19 @@
 DZ.ready.then(({ settings, products, videos }) => {
   const { esc, productCard, videoCard, waLink, img, ICONS } = DZ;
 
-  // Hero image
-  if (settings.heroImage) {
-    document.getElementById('heroArt').innerHTML =
-      `<img src="${esc(img(settings.heroImage, 900))}" alt="DetanZa™ products" fetchpriority="high">`;
+  // Hero: an admin-uploaded banner image replaces the 3D box
+  const stage = document.getElementById('heroStage');
+  if (settings.heroImage && stage) {
+    stage.outerHTML = `<img class="hero-custom" src="${esc(img(settings.heroImage, 900))}" alt="DetanZa™ products" fetchpriority="high">`;
+  }
+
+  // Spotlight "Order Now" → WhatsApp with Tan Vanish pre-filled
+  const spotOrder = document.getElementById('spotOrder');
+  const tanVanish = products.find((p) => p.id === 'tan-vanish-cream');
+  if (spotOrder && tanVanish) {
+    const buy = DZ.buyLink(tanVanish, settings);
+    spotOrder.href = buy.href;
+    if (buy.external) { spotOrder.target = '_blank'; spotOrder.rel = 'noopener'; }
   }
 
   // Shop: featured first, then the admin's order

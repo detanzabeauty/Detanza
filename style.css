@@ -4,17 +4,17 @@
    ========================================================================== */
 
 :root {
-  --pink: #e4126b;
-  --pink-dark: #b80d55;
-  --pink-soft: #fff0f6;
-  --pink-tint: #ffe1ee;
-  --peach: #fff6f0;
+  --pink: #e23d7a;
+  --pink-dark: #b8245c;
+  --pink-soft: #fff0f4;
+  --pink-tint: #ffe1ea;
+  --peach: #fff4ef;
   --brand-blue: #33448f;   /* from the DetanZa logo */
   --brand-teal: #11928f;   /* from the DetanZa logo */
 
-  --ink: #1d1d2b;
-  --text: #3d3d4e;
-  --muted: #74748a;
+  --ink: #2a1a20;
+  --text: #45333a;
+  --muted: #7d6a70;
   --line: #ececf2;
   --bg: #ffffff;
   --bg-soft: #f8f8fb;
@@ -66,7 +66,7 @@ h1, h2, h3, h4 { color: var(--ink); line-height: 1.25; }
   transition: background .2s, color .2s, border-color .2s, transform .15s, box-shadow .2s;
 }
 .btn:active { transform: translateY(1px); }
-.btn-primary { background: var(--pink); color: #fff; box-shadow: 0 6px 18px -6px rgba(228, 18, 107, .55); }
+.btn-primary { background: var(--pink); color: #fff; box-shadow: 0 10px 24px -10px rgba(226, 61, 122, .6); }
 .btn-primary:hover { background: var(--pink-dark); }
 .btn-outline { border-color: var(--pink); color: var(--pink); background: #fff; }
 .btn-outline:hover { background: var(--pink-soft); }
@@ -328,6 +328,14 @@ a.contact-card:hover { border-color: var(--pink); box-shadow: var(--shadow-sm); 
 .pdp-block { border-top: 1px solid var(--line); padding: 20px 0; }
 .pdp-block h2 { font-size: 16px; margin-bottom: 10px; }
 .pdp-block p { white-space: pre-line; }
+.pdp-acc summary { list-style: none; cursor: pointer; display: flex; justify-content: space-between; align-items: center; }
+.pdp-acc summary::-webkit-details-marker { display: none; }
+.pdp-acc summary h2 { margin: 0; }
+.pdp-acc summary::after { content: '+'; font-size: 22px; color: var(--pink); transition: transform .3s; }
+.pdp-acc[open] summary::after { transform: rotate(45deg); }
+.pdp-acc[open] summary { margin-bottom: 10px; }
+.pdp-acc p { font-size: 14px; color: var(--muted); }
+.pdp-main img[src*="box-3d"] { object-fit: contain; padding: 4%; background: radial-gradient(circle at 50% 45%, #fff, #fde8e4 80%); }
 .benefit-list { list-style: none; display: grid; gap: 8px; }
 .benefit-list li { display: flex; gap: 10px; }
 .benefit-list li::before { content: '✓'; color: var(--pink); font-weight: 700; }

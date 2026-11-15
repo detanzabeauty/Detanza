@@ -1,4 +1,4 @@
-import { isAuthed, normalizeContent, readBody, readContent, writeContent } from './_lib.js';
+import { DEFAULT_CONTENT, isAuthed, normalizeContent, readBody, readContent, writeContent } from './_lib.js';
 
 export default async function handler(req, res) {
   if (req.method === 'GET') {
@@ -12,7 +12,12 @@ export default async function handler(req, res) {
       return res.status(200).json(content);
     } catch (err) {
       console.error('content GET failed', err);
-      return res.status(500).json({ error: 'Could not load content.' });
+      if (req.query && req.query.fresh) {
+        return res.status(500).json({ error: 'Could not load content from the database. ' + (err.message || '') });
+      }
+      // Keep the public site working with the default content.
+      res.setHeader('Cache-Control', 'public, s-maxage=10');
+      return res.status(200).json({ ...DEFAULT_CONTENT, updatedAt: null, fallback: true });
     }
   }
 

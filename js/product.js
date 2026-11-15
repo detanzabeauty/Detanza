@@ -60,7 +60,8 @@ DZ.ready.then(({ settings, products, videos }) => {
         ${p.description ? `<div class="pdp-block"><h2>Description</h2><p>${esc(p.description)}</p></div>` : ''}
         ${(p.benefits || []).length ? `<div class="pdp-block"><h2>Key Benefits</h2><ul class="benefit-list">${p.benefits.map((b) => `<li>${esc(b)}</li>`).join('')}</ul></div>` : ''}
         ${(p.howToUse || []).length ? `<div class="pdp-block"><h2>How to Use</h2><ol class="step-list">${p.howToUse.map((s) => `<li>${esc(s)}</li>`).join('')}</ol></div>` : ''}
-        ${p.ingredients ? `<div class="pdp-block"><h2>Ingredients</h2><p>${esc(p.ingredients)}</p></div>` : ''}
+        ${p.ingredients ? `<details class="pdp-block pdp-acc"><summary><h2>Ingredients</h2></summary><p>${esc(p.ingredients)}</p></details>` : ''}
+        ${p.caution ? `<details class="pdp-block pdp-acc"><summary><h2>Caution &amp; Storage</h2></summary><p>${esc(p.caution)}</p></details>` : ''}
       </div>
     </div>
     ${related.length ? `
